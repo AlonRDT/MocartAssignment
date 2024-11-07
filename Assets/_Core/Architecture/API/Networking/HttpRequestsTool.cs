@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
+using Architecture.API.Events;
 
 namespace Architecture.API.Networking
 {
@@ -19,9 +20,9 @@ namespace Architecture.API.Networking
         /// </summary>
         /// <param name="uri"> target uri </param>
         /// <returns> response from server </returns>
-        public async Task<string> SendGetRequest(string uri)
+        public async Task<string> SendGetRequestAsync(string uri)
         {
-            return await SendGetRequest(uri, "");
+            return await SendGetRequestAsync(uri, "");
         }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace Architecture.API.Networking
         /// <param name="uri"> target uri </param>
         /// <param name="token"> empty for no token or string for authentication </param>
         /// <returns> response from server </returns>
-        public async Task<string> SendGetRequest(string uri, string token)
+        public async Task<string> SendGetRequestAsync(string uri, string token)
         {
             string output = "null";
 
@@ -58,6 +59,36 @@ namespace Architecture.API.Networking
             }
 
             return output;
+        }
+
+        /// <summary>
+        /// send get request to uri on main thread
+        /// </summary>
+        /// <param name="uri"> target address </param>
+        /// <returns> noting, sends data back through event system </returns>
+        public IEnumerator SendGetRequest(string uri, string eventName)
+        {
+            // Create a UnityWebRequest object for a GET request
+            using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+            {
+                // Send the request and wait for a response
+                yield return webRequest.SendWebRequest();
+
+                // Check for network errors or HTTP errors
+                if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    Debug.LogError("Error: " + webRequest.error);
+                }
+                else
+                {
+                    // Get the response text (assuming it's a JSON or text response)
+                    string responseText = webRequest.downloadHandler.text;
+                    Debug.Log("Response: " + responseText);
+                    EventDispatcher<string>.Raise(eventName, responseText);
+
+                    // Parse the response or do something with the data here
+                }
+            }
         }
 
         #endregion
