@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System;
 using Architecture.API.Events;
+using Newtonsoft.Json;
 
 namespace Architecture.API.Networking
 {
@@ -66,7 +67,7 @@ namespace Architecture.API.Networking
         /// </summary>
         /// <param name="uri"> target address </param>
         /// <returns> noting, sends data back through event system </returns>
-        public IEnumerator SendGetRequest(string uri, string eventName)
+        public IEnumerator SendGetRequest<T>(string uri, string eventName)
         {
             // Create a UnityWebRequest object for a GET request
             using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
@@ -84,9 +85,16 @@ namespace Architecture.API.Networking
                     // Get the response text (assuming it's a JSON or text response)
                     string responseText = webRequest.downloadHandler.text;
                     Debug.Log("Response: " + responseText);
-                    EventDispatcher<string>.Raise(eventName, responseText);
 
-                    // Parse the response or do something with the data here
+                    try
+                    {
+                        T output = JsonConvert.DeserializeObject<T>(responseText);
+                        EventDispatcher<T>.Raise(eventName, output);
+                    }
+                    catch
+                    {
+                        Debug.LogError($"Could not deserilize get repsone to target {typeof(T).Name}, response: {responseText}");
+                    }
                 }
             }
         }
