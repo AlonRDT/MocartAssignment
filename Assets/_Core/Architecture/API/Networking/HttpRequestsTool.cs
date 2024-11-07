@@ -84,7 +84,6 @@ namespace Architecture.API.Networking
                 {
                     // Get the response text (assuming it's a JSON or text response)
                     string responseText = webRequest.downloadHandler.text;
-                    Debug.Log("Response: " + responseText);
 
                     try
                     {

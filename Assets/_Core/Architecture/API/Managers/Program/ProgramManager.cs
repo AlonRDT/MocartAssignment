@@ -25,10 +25,15 @@ namespace Architecture.API.Managers.Program
         /// <param name="products"> products data received from server </param>
         private void onProductsReceived(ProductsData products)
         {
-            foreach (var product in products.products)
+            foreach (ProductsData.ProductData product in products.products)
             {
-                Debug.Log($"name: {product.name}, desc: {product.description}, price: {product.price}");
+                EventDispatcher<ProductsData.ProductData>.Raise(ProgramEvents.ShowNote.ToString(), product);
             }
+        }
+
+        void OnDestroy()
+        {
+            EventDispatcher<ProductsData>.Unregister(ProgramEvents.OnProductsReceived.ToString(), onProductsReceived);
         }
     }
 }
