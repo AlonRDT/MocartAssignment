@@ -1,6 +1,8 @@
 using System.Linq;
 using UnityEngine;
+using static Architecture.API.Managers.Program.ProgramManager;
 using static Architecture.API.Networking.NetworkJsonClasses;
+using static UnityEngine.Analytics.IAnalytic;
 
 namespace Environment.API.Shelf
 {
@@ -14,8 +16,7 @@ namespace Environment.API.Shelf
         [SerializeField] private TextMesh m_DescriptionText;
         [SerializeField] private TextMesh m_PriceText;
 
-        private bool m_IsActive = false;
-        public bool IsActive => m_IsActive;
+        private ProductRefinedData m_Data;
 
         #endregion
 
@@ -24,13 +25,25 @@ namespace Environment.API.Shelf
             m_Model.SetActive(false);    
         }
 
-        public void ShowNote(ProductsData.ProductData data)
+        /// <summary>
+        /// make note visible in scene and display product data received from server
+        /// </summary>
+        /// <param name="data"> product data to display </param>
+        public void ShowNote(ProductRefinedData data)
         {
-            m_IsActive = true;
             m_Model.SetActive(true);
-            m_NameText.text = data.name;
-            m_DescriptionText.text = string.Join('\n', data.description.Split(' '));
-            m_PriceText.text = "Price: " + data.price.ToString("F2");
+            m_Data = data;
+            RefreshData();
+        }
+
+        /// <summary>
+        /// show most current data saved in the data object
+        /// </summary>
+        public void RefreshData()
+        {
+            m_NameText.text = m_Data.Name;
+            m_DescriptionText.text = string.Join('\n', m_Data.Description.Split(' '));
+            m_PriceText.text = "Price: " + m_Data.Price.ToString("F2");
         }
     }
 }

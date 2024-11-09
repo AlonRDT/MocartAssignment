@@ -9,6 +9,22 @@ namespace Architecture.API.Managers.Program
 {
     public class ProgramManager : Manager
     {
+        public class ProductRefinedData
+        {
+            public int Index;
+            public string Name;
+            public string Description;
+            public float Price;
+
+            public ProductRefinedData(int index, ProductsData.ProductData data)
+            {
+                Index = index;
+                Name = data.name; 
+                Description = data.description; 
+                Price = data.price;
+            }
+        }
+
         void Awake()
         {
             EventDispatcher<ProductsData>.Register(ProgramEvents.OnProductsReceived.ToString(), onProductsReceived);
@@ -25,9 +41,10 @@ namespace Architecture.API.Managers.Program
         /// <param name="products"> products data received from server </param>
         private void onProductsReceived(ProductsData products)
         {
-            foreach (ProductsData.ProductData product in products.products)
+            for (int i = 0; i < products.products.Count; i++)
             {
-                EventDispatcher<ProductsData.ProductData>.Raise(ProgramEvents.ShowNote.ToString(), product);
+                EventDispatcher<ProductRefinedData>.Raise(ProgramEvents.ShowNote.ToString(),
+                    new ProductRefinedData(i, products.products[i]));
             }
         }
 
