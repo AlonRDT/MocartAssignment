@@ -13,7 +13,6 @@ namespace UI.API.Edit.Buttons
         private RectTransform m_RectTransform; // Reference to the UI element's RectTransform
         [SerializeField] private float m_SizePercentageOfScreenHeight = 10f; // Percentage of screen height for both width and height
 
-        private Vector2 m_OriginalSize; // Store the original size of the RectTransform
         private ProductRefinedData m_Data;
 
         #endregion
@@ -23,7 +22,6 @@ namespace UI.API.Edit.Buttons
         private void Awake()
         {
             m_RectTransform = GetComponent<RectTransform>();
-            m_OriginalSize = m_RectTransform.sizeDelta;
         }
 
         void OnDestroy()
@@ -60,7 +58,12 @@ namespace UI.API.Edit.Buttons
             float targetHeight = screenHeight * (m_SizePercentageOfScreenHeight / 100f);
 
             // Calculate the scale factor needed to fit the target height while keeping the aspect ratio
-            float scaleFactor = targetHeight / m_OriginalSize.y;
+            float scaleFactor = targetHeight / m_RectTransform.sizeDelta.y;
+
+            if(scaleFactor * m_RectTransform.sizeDelta.x > Screen.width / 6)
+            {
+                scaleFactor = (Screen.width / 6) / m_RectTransform.sizeDelta.x;
+            }
 
             m_RectTransform.localScale = new Vector3(scaleFactor, scaleFactor, 1f);
         }

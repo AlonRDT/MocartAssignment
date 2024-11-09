@@ -37,7 +37,6 @@ namespace UI.API.Edit.Panel
         [SerializeField] private Button m_RetryButton;
         [SerializeField] private Button m_BackButton;
 
-        private Vector2 m_OriginalSize; // Store the original size of the RectTransform
         private ProductRefinedData m_CurrentData;
         private Sequence m_Sequence;
 
@@ -50,7 +49,6 @@ namespace UI.API.Edit.Panel
             EventDispatcher<ProductUpdateResponseData>.Register(EditEvents.EditGotResponse.ToString(), gotEditResponse);
             EventDispatcher.Register(EditEvents.EditFail.ToString(), editRequestFailed);
 
-            m_OriginalSize = m_RectTransform.sizeDelta;
             setPanelSize();
             ScreenManager.OnScreenSizeChange += setPanelSize;
             MovePanel(TargetPosition.Above, true);
@@ -64,6 +62,8 @@ namespace UI.API.Edit.Panel
 
         private void setPanelSize()
         {
+            float widthMinimum = Screen.width / 1.2f; // make sure that if height is bigger than width than size has a minimum based on width percentage
+
             // Get the screen height
             float screenHeight = Screen.height;
 
@@ -71,7 +71,12 @@ namespace UI.API.Edit.Panel
             float targetHeight = screenHeight * (m_SizePercentageOfScreenHeight / 100f);
 
             // Calculate the scale factor needed to fit the target height while keeping the aspect ratio
-            float scaleFactor = targetHeight / m_OriginalSize.y;
+            float scaleFactor = targetHeight / m_RectTransform.sizeDelta.y;
+
+            if (scaleFactor * m_RectTransform.sizeDelta.x > widthMinimum)
+            {
+                scaleFactor = widthMinimum / m_RectTransform.sizeDelta.x;
+            }
 
             m_RectTransform.localScale = new Vector3(scaleFactor, scaleFactor, 1f);
         }
