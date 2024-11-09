@@ -3,6 +3,7 @@ using Architecture.API.Managers.Program;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UI.API.Edit;
 using UnityEngine;
 using static Architecture.API.Networking.NetworkJsonClasses;
 
@@ -19,7 +20,20 @@ namespace Architecture.API.Networking
         /// </summary>
         public static void GetProducts()
         {
-            MainThreadEventDispatcher.Instance().Enqueue(s_RequestsTool.SendGetRequest<ProductsData>(s_ServerURI, ProgramEvents.OnProductsReceived.ToString()));
+            MainThreadEventDispatcher.Instance().Enqueue(s_RequestsTool.SendGetRequest<ProductsData>(s_ServerURI, ProgramEvents.OnProductsReceived.ToString(), ""));
+        }
+
+        public static void UpdateProduct(string name, float price)
+        {
+            string endPoint = "/" + name; // tried to find the uri for this action and failed, need to ask backend team
+
+            /*
+            MainThreadEventDispatcher.Instance().Enqueue(s_RequestsTool.SendPutRequest<ProductUpdateResponseData>(s_ServerURI + endPoint,
+                new ProductUpdateRequestData(name, price).ToJson(),
+                EditEvents.EditGotResponse.ToString(), EditEvents.EditFail.ToString()));
+            */
+
+            EventDispatcher<ProductUpdateResponseData>.Raise(EditEvents.EditGotResponse.ToString(), new ProductUpdateResponseData(true));
         }
     }
 }

@@ -1469,7 +1469,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 426286347}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2021020393}
+        m_TargetAssemblyTypeName: UI.API.Edit.Panel.EditPanelLogic, Assembly-CSharp
+        m_MethodName: OnClickSave
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &426286347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2991,7 +3003,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1029891088}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2021020393}
+        m_TargetAssemblyTypeName: UI.API.Edit.Panel.EditPanelLogic, Assembly-CSharp
+        m_MethodName: OnClickCancel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1029891088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4355,7 +4379,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Edit
+  m_text: Retry
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5925,11 +5949,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RectTransform: {fileID: 2103670080}
+  m_EditParent: {fileID: 953825880}
   m_NameInputField: {fileID: 1200605921}
   m_PriceInputField: {fileID: 1680256537}
   m_SaveButton: {fileID: 1757958970}
   m_CancelButton: {fileID: 1291778400}
   m_SizePercentageOfScreenHeight: 60
+  m_ResultParent: {fileID: 592621627}
   m_ResultText: {fileID: 1577903438}
   m_RetryButton: {fileID: 426286346}
   m_BackButton: {fileID: 1029891087}

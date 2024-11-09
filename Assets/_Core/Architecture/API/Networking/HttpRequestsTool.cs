@@ -66,8 +66,10 @@ namespace Architecture.API.Networking
         /// send get request to uri on main thread
         /// </summary>
         /// <param name="uri"> target address </param>
+        /// <param name="successEvent"> event data will passed to on succesfull request </param>
+        /// <param name="failEvent"> event called if request failed getting or parsing response </param>
         /// <returns> noting, sends data back through event system </returns>
-        public IEnumerator SendGetRequest<T>(string uri, string eventName)
+        public IEnumerator SendGetRequest<T>(string uri, string successEvent, string failEvent)
         {
             // Create a UnityWebRequest object for a GET request
             using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
@@ -79,6 +81,7 @@ namespace Architecture.API.Networking
                 if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
                 {
                     Debug.LogError("Error: " + webRequest.error);
+                    EventDispatcher.Raise(failEvent);
                 }
                 else
                 {
@@ -88,11 +91,12 @@ namespace Architecture.API.Networking
                     try
                     {
                         T output = JsonConvert.DeserializeObject<T>(responseText);
-                        EventDispatcher<T>.Raise(eventName, output);
+                        EventDispatcher<T>.Raise(successEvent, output);
                     }
                     catch
                     {
                         Debug.LogError($"Could not deserilize get repsone to target {typeof(T).Name}, response: {responseText}");
+                        EventDispatcher.Raise(failEvent);
                     }
                 }
             }
@@ -151,6 +155,55 @@ namespace Architecture.API.Networking
             return output;
         }
 
+        /// <summary>
+        /// send post request to uri on main thread
+        /// </summary>
+        /// <param name="uri"> target address </param>
+        /// <param name="jsonData"> data sent in the body of request of type json </param>
+        /// <param name="successEvent"> event data will passed to on succesfull request </param>
+        /// <param name="failEvent"> event called if request failed getting or parsing response </param>
+        /// <returns> noting, sends data back through event system </returns>
+        public IEnumerator SendPostRequest<T>(string uri, string jsonData, string successEvent, string failEvent)
+        {
+            // Create a UnityWebRequest object for a GET request
+            using (UnityWebRequest webRequest = new UnityWebRequest(uri, "POST"))
+            {
+                // Set up the body of the request
+                byte[] jsonToSend = Encoding.UTF8.GetBytes(jsonData);
+                webRequest.uploadHandler = new UploadHandlerRaw(jsonToSend);
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+
+                // Set the request headers
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+
+                // Send the request and wait for a response
+                yield return webRequest.SendWebRequest();
+
+                // Check for network errors or HTTP errors
+                if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    Debug.LogError("Error: " + webRequest.error);
+                    EventDispatcher.Raise(failEvent);
+                }
+                else
+                {
+                    // Get the response text (assuming it's a JSON or text response)
+                    string responseText = webRequest.downloadHandler.text;
+
+                    try
+                    {
+                        T output = JsonConvert.DeserializeObject<T>(responseText);
+                        EventDispatcher<T>.Raise(successEvent, output);
+                    }
+                    catch
+                    {
+                        Debug.LogError($"Could not deserilize get repsone to target {typeof(T).Name}, response: {responseText}");
+                        EventDispatcher.Raise(failEvent);
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region Put
@@ -204,6 +257,55 @@ namespace Architecture.API.Networking
             return output;
         }
 
+        /// <summary>
+        /// send post request to uri on main thread
+        /// </summary>
+        /// <param name="uri"> target address </param>
+        /// <param name="jsonData"> data sent in the body of request of type json </param>
+        /// <param name="successEvent"> event data will passed to on succesfull request </param>
+        /// <param name="failEvent"> event called if request failed getting or parsing response </param>
+        /// <returns> noting, sends data back through event system </returns>
+        public IEnumerator SendPutRequest<T>(string uri, string jsonData, string successEvent, string failEvent)
+        {
+            // Create a UnityWebRequest object for a GET request
+            using (UnityWebRequest webRequest = new UnityWebRequest(uri, "PUT"))
+            {
+                // Set up the body of the request
+                byte[] jsonToSend = Encoding.UTF8.GetBytes(jsonData);
+                webRequest.uploadHandler = new UploadHandlerRaw(jsonToSend);
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+
+                // Set the request headers
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+
+                // Send the request and wait for a response
+                yield return webRequest.SendWebRequest();
+
+                // Check for network errors or HTTP errors
+                if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    Debug.LogError("Error: " + webRequest.error);
+                    EventDispatcher.Raise(failEvent);
+                }
+                else
+                {
+                    // Get the response text (assuming it's a JSON or text response)
+                    string responseText = webRequest.downloadHandler.text;
+
+                    try
+                    {
+                        T output = JsonConvert.DeserializeObject<T>(responseText);
+                        EventDispatcher<T>.Raise(successEvent, output);
+                    }
+                    catch
+                    {
+                        Debug.LogError($"Could not deserilize get repsone to target {typeof(T).Name}, response: {responseText}");
+                        EventDispatcher.Raise(failEvent);
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region Delete
@@ -252,6 +354,46 @@ namespace Architecture.API.Networking
             }
 
             return output;
+        }
+
+        /// <summary>
+        /// send delete request to uri on main thread
+        /// </summary>
+        /// <param name="uri"> target address </param>
+        /// <param name="successEvent"> event data will passed to on succesfull request </param>
+        /// <param name="failEvent"> event called if request failed getting or parsing response </param>
+        /// <returns> noting, sends data back through event system </returns>
+        public IEnumerator SendDeleteRequest<T>(string uri, string successEvent, string failEvent)
+        {
+            // Create a UnityWebRequest object for a GET request
+            using (UnityWebRequest webRequest = UnityWebRequest.Delete(uri))
+            {
+                // Send the request and wait for a response
+                yield return webRequest.SendWebRequest();
+
+                // Check for network errors or HTTP errors
+                if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    Debug.LogError("Error: " + webRequest.error);
+                    EventDispatcher.Raise(failEvent);
+                }
+                else
+                {
+                    // Get the response text (assuming it's a JSON or text response)
+                    string responseText = webRequest.downloadHandler.text;
+
+                    try
+                    {
+                        T output = JsonConvert.DeserializeObject<T>(responseText);
+                        EventDispatcher<T>.Raise(successEvent, output);
+                    }
+                    catch
+                    {
+                        Debug.LogError($"Could not deserilize get repsone to target {typeof(T).Name}, response: {responseText}");
+                        EventDispatcher.Raise(failEvent);
+                    }
+                }
+            }
         }
 
         #endregion

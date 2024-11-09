@@ -7,5 +7,7 @@ namespace UI.API.Edit
         GetButtonPosition,
         EditProduct,
         RefreshProductData,
+        EditGotResponse,
+        EditFail,
     }
 }
