@@ -12,10 +12,15 @@ namespace UI.API.Edit
 {
     public class EditFrontLogic : MonoBehaviour
     {
+        #region Variables
+
         [SerializeField] private List<EnterEditButtonLogic> m_EnterEditButtons = new List<EnterEditButtonLogic>();
         [SerializeField] private EditPanelLogic m_EditPanel;
 
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
+        #endregion
+
+        #region Ctor/Dtor
+
         void Awake()
         {
             EventDispatcher<ProductRefinedData>.Register(ProgramEvents.ShowNote.ToString(), showEditButton);
@@ -29,6 +34,16 @@ namespace UI.API.Edit
             m_EditPanel.gameObject.SetActive(false);
         }
 
+        void OnDestroy()
+        {
+            EventDispatcher<ProductRefinedData>.Unregister(ProgramEvents.ShowNote.ToString(), showEditButton);
+            EventDispatcher<ProductRefinedData>.Unregister(EditEvents.EditProduct.ToString(), enterEditMode);
+        }
+
+        #endregion
+
+        #region Edit Mode Management
+
         private void showEditButton(ProductRefinedData data)
         {
             m_EnterEditButtons[data.Index].Init(data);
@@ -38,5 +53,7 @@ namespace UI.API.Edit
         {
             m_EditPanel.EnterEditMode(data);
         }
+
+        #endregion
     }
 }

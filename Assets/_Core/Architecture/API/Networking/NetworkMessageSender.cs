@@ -23,6 +23,11 @@ namespace Architecture.API.Networking
             MainThreadEventDispatcher.Instance().Enqueue(s_RequestsTool.SendGetRequest<ProductsData>(s_ServerURI, ProgramEvents.OnProductsReceived.ToString(), ""));
         }
 
+        /// <summary>
+        /// sends server request to update details about products
+        /// </summary>
+        /// <param name="name"> new name of product </param>
+        /// <param name="price"> new price of product </param>
         public static void UpdateProduct(string name, float price)
         {
             string endPoint = "/" + name; // tried to find the uri for this action and failed, need to ask backend team

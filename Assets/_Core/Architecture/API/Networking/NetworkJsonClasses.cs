@@ -7,6 +7,9 @@ namespace Architecture.API.Networking
 {
     public class NetworkJsonClasses
     {
+        #region Product
+
+        // products get response body
         [Serializable]
         public class ProductsData
         {
@@ -20,6 +23,7 @@ namespace Architecture.API.Networking
             public List<ProductData> products;
         }
 
+        // products update request body
         [Serializable]
         public class ProductUpdateRequestData
         {
@@ -38,6 +42,7 @@ namespace Architecture.API.Networking
             }
         }
 
+        // assumed product response body, need to get design from backend team
         [Serializable]
         public class ProductUpdateResponseData
         {
@@ -48,5 +53,7 @@ namespace Architecture.API.Networking
                 this.success = success;
             }
         }
+
+        #endregion
     }
 }

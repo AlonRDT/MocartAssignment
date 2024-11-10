@@ -9,6 +9,8 @@ namespace Architecture.API.Managers.Program
 {
     public class ProgramManager : Manager
     {
+        #region Refined Data Classes
+
         public class ProductRefinedData
         {
             public int Index;
@@ -25,10 +27,23 @@ namespace Architecture.API.Managers.Program
             }
         }
 
+        #endregion
+
+        #region Ctor/Dtor
+
         void Awake()
         {
             EventDispatcher<ProductsData>.Register(ProgramEvents.OnProductsReceived.ToString(), onProductsReceived);
         }
+
+        void OnDestroy()
+        {
+            EventDispatcher<ProductsData>.Unregister(ProgramEvents.OnProductsReceived.ToString(), onProductsReceived);
+        }
+
+        #endregion
+
+        #region Product Management
 
         void Start()
         {
@@ -48,9 +63,6 @@ namespace Architecture.API.Managers.Program
             }
         }
 
-        void OnDestroy()
-        {
-            EventDispatcher<ProductsData>.Unregister(ProgramEvents.OnProductsReceived.ToString(), onProductsReceived);
-        }
+        #endregion
     }
 }

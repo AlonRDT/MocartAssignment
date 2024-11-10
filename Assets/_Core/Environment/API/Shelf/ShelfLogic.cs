@@ -35,6 +35,8 @@ namespace Environment.API.Shelf
 
         #endregion
 
+        #region Note Managment
+
         /// <summary>
         /// displays note with data received from server
         /// </summary>
@@ -62,5 +64,7 @@ namespace Environment.API.Shelf
         {
             m_Notes[index].RefreshData();
         }
+
+        #endregion
     }
 }

@@ -5,19 +5,33 @@ using Architecture.API.Managers;
 
 namespace Environment.API.Cameras
 {
-    public class CameraPositiioner : MonoBehaviour
+    public class CameraPositioner : MonoBehaviour
     {
-        private Camera m_Camera;
-        [SerializeField] private List<Transform> m_AlignmentPoints = new List<Transform>();
+        #region Variables
 
-        // Start is called before the first frame update
-        void Start()
+        private Camera m_Camera;
+        [SerializeField] private List<Transform> m_AlignmentPoints = new List<Transform>(); // points that camera should always keep in view
+
+        #endregion
+
+        #region Ctor/Dtor
+
+        void Awake()
         {
             m_Camera = GetComponent<Camera>();
             AdjustCamera();
-            ScreenManager.OnScreenSizeChange += AdjustCamera;
+            ScreenManager.OnScreenSizeChangeFirst += AdjustCamera;
         }
 
+        private void OnDestroy()
+        {
+            ScreenManager.OnScreenSizeChangeFirst -= AdjustCamera;
+        }
+
+        /// <summary>
+        /// camera should remain on same plane and move on z axis to keep alignment point so if screen size changes than view of scenes remain as much the same as
+        /// possible
+        /// </summary>
         public void AdjustCamera()
         {
             float Length = Mathf.Abs(m_AlignmentPoints[0].position.x - m_AlignmentPoints[1].position.x) / 2;
@@ -41,5 +55,7 @@ namespace Environment.API.Cameras
 
             transform.position = new Vector3(0, 0, m_AlignmentPoints[0].position.z - distance);
         }
+
+        #endregion
     }
 }

@@ -26,10 +26,12 @@ namespace UI.API.Edit.Buttons
 
         void OnDestroy()
         {
-            ScreenManager.OnScreenSizeChange -= setButtonSizeAndPosition;
+            ScreenManager.OnScreenSizeChangeSecond -= setButtonSizeAndPosition;
         }
 
         #endregion
+
+        #region Initialization
 
         /// <summary>
         /// initilize button, shows in correct place and hold data
@@ -41,7 +43,7 @@ namespace UI.API.Edit.Buttons
             gameObject.SetActive(true);
             m_Data = data;
             setButtonSizeAndPosition();
-            ScreenManager.OnScreenSizeChange += setButtonSizeAndPosition;
+            ScreenManager.OnScreenSizeChangeSecond += setButtonSizeAndPosition;
         }
 
         /// <summary>
@@ -77,6 +79,11 @@ namespace UI.API.Edit.Buttons
             ScreenManager.SetPositonByWorldPos(m_RectTransform, position - new Vector3(0, 0.25f, 0));
         }
 
+        #endregion
+
+        /// <summary>
+        /// When Clicking button notifies program to enter edit mode of target product
+        /// </summary>
         public void OnClick()
         {
             EventDispatcher<ProductRefinedData>.Raise(EditEvents.EditProduct.ToString(), m_Data);

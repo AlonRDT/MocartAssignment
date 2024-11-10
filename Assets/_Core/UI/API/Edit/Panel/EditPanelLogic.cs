@@ -50,16 +50,20 @@ namespace UI.API.Edit.Panel
             EventDispatcher.Register(EditEvents.EditFail.ToString(), editRequestFailed);
 
             setPanelSize();
-            ScreenManager.OnScreenSizeChange += setPanelSize;
+            ScreenManager.OnScreenSizeChangeSecond += setPanelSize;
             MovePanel(TargetPosition.Above, true);
         }
 
         void OnDestroy()
         {
+            ScreenManager.OnScreenSizeChangeSecond -= setPanelSize;
             EventDispatcher<ProductUpdateResponseData>.Unregister(EditEvents.EditGotResponse.ToString(), gotEditResponse);
             EventDispatcher.Unregister(EditEvents.EditFail.ToString(), editRequestFailed);
         }
 
+        /// <summary>
+        /// set panel size corresponding to screen height or width depending on which is greater so that changing screen size keeps smooth look
+        /// </summary>
         private void setPanelSize()
         {
             float widthMinimum = Screen.width / 1.2f; // make sure that if height is bigger than width than size has a minimum based on width percentage
@@ -85,6 +89,10 @@ namespace UI.API.Edit.Panel
 
         #region Transitions
 
+        /// <summary>
+        /// transition to edit mode from shelf browsing
+        /// </summary>
+        /// <param name="data"> datat of target product to edit </param>
         public void EnterEditMode(ProductRefinedData data)
         {
             gameObject.SetActive(true);
@@ -96,6 +104,10 @@ namespace UI.API.Edit.Panel
             MovePanel(TargetPosition.Center);
         }
 
+        /// <summary>
+        /// transion from edit ui to server response ui
+        /// </summary>
+        /// <param name="success"> wether edit was a success </param>
         private void transitionToResult(bool success)
         {
             setButtonsInteractability(true);
@@ -121,6 +133,11 @@ namespace UI.API.Edit.Panel
 
         #region Movement
 
+        /// <summary>
+        /// movement of edit panel outside or to center screen, could be animated ot immidiate
+        /// </summary>
+        /// <param name="targetPosition"> wether movement direction is towards outseide or center of screen </param>
+        /// <param name="immidiate"></param>
         public void MovePanel(TargetPosition targetPosition, bool immidiate = false)
         {
             setButtonsInteractability(false);
@@ -143,6 +160,10 @@ namespace UI.API.Edit.Panel
             }
         }
 
+        /// <summary>
+        /// action called when edit panel finished animation to center or outside screen
+        /// </summary>
+        /// <param name="targetPosition"> wether finish of animation was outside or center of screen </param>
         private void onEndMovement(TargetPosition targetPosition)
         {
             if (targetPosition == TargetPosition.Center)
@@ -159,6 +180,10 @@ namespace UI.API.Edit.Panel
 
         #region Buttons
 
+        /// <summary>
+        /// disable or enable buttons for duration of animation or server requests
+        /// </summary>
+        /// <param name="interactable"> wether to disable or enale buttons </param>
         private void setButtonsInteractability(bool interactable)
         {
             m_SaveButton.interactable = interactable;
@@ -167,6 +192,9 @@ namespace UI.API.Edit.Panel
             m_CancelButton.interactable = interactable;
         }
 
+        /// <summary>
+        /// attempt to edit product name or price on server
+        /// </summary>
         public void OnClickSave()
         {
             setButtonsInteractability(false);
@@ -183,6 +211,9 @@ namespace UI.API.Edit.Panel
             }
         }
 
+        /// <summary>
+        /// Logic for exiting edit mode without making changes
+        /// </summary>
         public void OnClickCancel()
         {
             MovePanel(TargetPosition.Above);
@@ -192,11 +223,18 @@ namespace UI.API.Edit.Panel
 
         #region Response Handling
 
+        /// <summary>
+        /// handles response of server to product edit request
+        /// </summary>
+        /// <param name="response"> wether update was a succes or not, made up json since I dont have backend design </param>
         private void gotEditResponse(ProductUpdateResponseData response)
         {
             transitionToResult(response.success);
         }
 
+        /// <summary>
+        /// if edit request to server failed or casting of response to json failed this method is called, there will be a debug error to know which case happened
+        /// </summary>
         private void editRequestFailed()
         {
             transitionToResult(false);

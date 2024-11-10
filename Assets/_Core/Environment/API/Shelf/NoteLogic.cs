@@ -10,7 +10,6 @@ namespace Environment.API.Shelf
     {
         #region Variables
 
-
         [SerializeField] private GameObject m_Model;
         [SerializeField] private TextMesh m_NameText;
         [SerializeField] private TextMesh m_DescriptionText;
@@ -20,10 +19,16 @@ namespace Environment.API.Shelf
 
         #endregion
 
+        #region Ctor/Dtor
+
         void Awake()
         {
             m_Model.SetActive(false);    
         }
+
+        #endregion
+
+        #region Data Presentation
 
         /// <summary>
         /// make note visible in scene and display product data received from server
@@ -45,5 +50,7 @@ namespace Environment.API.Shelf
             m_DescriptionText.text = string.Join('\n', m_Data.Description.Split(' '));
             m_PriceText.text = "Price: " + m_Data.Price.ToString("F2");
         }
+
+        #endregion
     }
 }
